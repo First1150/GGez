@@ -38,8 +38,8 @@
       }
     });
 
-    socket.on('chat message', (msg) => {
-      appendMessage('Other User', msg);
+    socket.on('chat message', (data) => {
+      appendMessage(data.sender, data.message);
     });
 
     function appendMessage(sender, message) {

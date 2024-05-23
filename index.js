@@ -6,25 +6,23 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server);
 
-const port = process.env.PORT || 3000;
-
-app.use(express.static('public'));
+app.get('/', (req, res) => {
+  res.sendFile(__dirname + '/index.html');
+});
 
 io.on('connection', (socket) => {
   console.log('A user connected');
 
-  // Handle messages from clients
-  socket.on('move', (data) => {
-    console.log('Move received:', data);
-    // Broadcast the move to other clients
-    socket.broadcast.emit('move', data);
+  socket.on('disconnect', () => {
+    console.log('User disconnected');
   });
 
-  socket.on('disconnect', () => {
-    console.log('A user disconnected');
+  socket.on('chat message', (msg) => {
+    io.emit('chat message', { sender: 'Other User', message: msg });
   });
 });
 
+const port = 3000;
 server.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
+  console.log(`Server is running on http://localhost:${port}`);
 });
